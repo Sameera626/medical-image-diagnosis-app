@@ -1,0 +1,13 @@
+# core
+tensorflow>=2.12
+numpy
+pandas
+matplotlib
+scikit-learn
+opencv-python
+streamlit
+
+# optional but recommended for tidy training/visualization
+tensorboard
+tensorflow-hub
+
