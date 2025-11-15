@@ -6,15 +6,31 @@ import cv2
 def make_gradcam_heatmap(img_array, model, pred_index=None):
     
     base_model = model.get_layer("efficientnetb0")
-    print(base_model.summary())
-    
-    grad_model = tf.keras.Model(
-        inputs = [model.inputs],
-        outputs = [base_model.get_layer("top_conv").output, model.output]
-    )
+    print("base_model layers:", base_model.layers)
+    last_conv_output = base_model.get_layer("top_conv").output
+    print("last_conv_output:", last_conv_output)    
+    base_index = model.layers.index(base_model)
+   
+    input_tensor = tf.keras.Input(shape=img_array.shape[1:])
+    x = base_model(input_tensor)
+    conv_output = x
+    print("conv_output:", conv_output)
+    for layer in model.layers[base_index + 1:]:
+        x = layer(x)
+    final_output = x
+    print("final_output:", final_output)
+    print("model output", model.output)
+    grad_model = tf.keras.Model(inputs=input_tensor, outputs=[conv_output, final_output])
 
+   
+    if not isinstance(img_array, tf.Tensor):
+        img_array = tf.convert_to_tensor(img_array)
+    img_array = tf.cast(img_array, tf.float32)
+
+  
     with tf.GradientTape() as tape:
         conv_outputs, predictions = grad_model(img_array, training=False)
+        tape.watch(conv_outputs)
         if pred_index is None:
             pred_index = tf.argmax(predictions[0])
         class_channel = predictions[:, pred_index]

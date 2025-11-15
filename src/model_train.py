@@ -1,8 +1,6 @@
 import tensorflow as tf
-import os
 from model_builder import build_model
 from data_loader import get_datasets
-
 
 
 def main():
@@ -24,13 +22,12 @@ def main():
         tf.keras.callbacks.TensorBoard(log_dir='./logs') 
     ]
 
-    history = model.fit(
+    model.fit(
         train_ds,
         validation_data = val_ds,
         epochs = 12,
         callbacks = callbacks
     )
-
     
     model.save('medical_image_model.keras')
     print("Model saved as keras format")

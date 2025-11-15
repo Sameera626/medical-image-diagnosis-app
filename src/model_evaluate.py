@@ -5,7 +5,7 @@ from data_loader import get_test_dataset
 
 def main():
 
-    model = tf.keras.models.load_model('medical_image_model.keras')
+    model = tf.keras.models.load_model('saved_model/medical_image_model.keras')
     test_ds = get_test_dataset()
 
     y_true = []
